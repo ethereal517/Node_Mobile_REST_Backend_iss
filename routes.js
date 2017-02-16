@@ -18,7 +18,47 @@ router.route('/messages')
                 res.send(err);
             res.json(messages);
         });
+    })
+    .post(function(req, res) {
+        var message = new Message();
+        message.text = req.body.text;
+        message.user = req.body.user;
+        message.save(function(err) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'Message Created successfully' });
+        });
     });
+
+router.route('/messages/:message_id')
+    .get(function(req, res) {
+        Message.findById(req.params.message_id, function(err, message) {
+            if (err)
+                res.send(err);
+            res.json(message);
+        });
+    })
+    .put(function(req, res) {
+        Message.findById(req.params.message_id, function(err, message) {
+            if (err)
+                res.send(err);
+            message.text = req.body.text;
+            message.save(function(err) {
+                if (err)
+                    res.send(err);
+                res.json({ message: 'Message successfully updated!' });
+            })
+        });
+    })
+    .delete(function(req, res) {
+        Message.remove({
+            _id: req.params.message_id
+        }, function(err, message) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'Successfully deleted message!' });
+        });
+    })
 
 module.exports = router;
 
